@@ -18,4 +18,12 @@ Updated Migrations.
 
 Added unit tests for created data models.
 
+Updated Migrations and added tests.
+
+Test build completed and code added until Models pass tests.
+
+Added relationship tests.
+
+Updated this file.
+
 
