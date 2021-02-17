@@ -1,31 +1,23 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Flabib\CsvSeeder\CsvSeeder;
 
-class CreatePartnersTable extends Migration
+class UsersTableSeeder extends CsvSeeder
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function __construct()
     {
-        Schema::create('partners', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $this->file = '/database/seeders/csvs/brokers.csv';
     }
-
+    
     /**
-     * Reverse the migrations.
+     * Run the database seeds.
      *
      * @return void
      */
-    public function down()
+    public function run()
     {
-        Schema::dropIfExists('partners');
+        // Recommended when importing larger CSVs
+	    DB::disableQueryLog();
+	    parent::run();
     }
 }

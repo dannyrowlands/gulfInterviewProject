@@ -2,10 +2,16 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use Flabib\CsvSeeder\CsvSeeder;
 
-class MeterPointsSeeder extends Seeder
+class MeterPointsSeeder extends CsvSeeder
 {
+    public function __construct()
+    {
+        $this->file = '/database/seeders/csvs/meterpoints.csv';
+        $this->tablename = 'meter_points';
+    }
+    
     /**
      * Run the database seeds.
      *
@@ -13,6 +19,8 @@ class MeterPointsSeeder extends Seeder
      */
     public function run()
     {
-        //
+        // Recommended when importing larger CSVs
+	    DB::disableQueryLog();
+	    parent::run();
     }
 }

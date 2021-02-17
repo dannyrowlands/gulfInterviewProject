@@ -15,7 +15,12 @@ class CreateMeterPointsTable extends Migration
     {
         Schema::create('meter_points', function (Blueprint $table) {
             $table->id();
+            $table->char('meterpoint', 200);
+            $table->bigInteger('consumption');
+            $table->bigInteger('uplift');
             $table->timestamps();
+            
+            $table->index(['id', 'consumption', 'uplift', 'created_at']);
         });
     }
 
