@@ -1,0 +1,17 @@
+ServerName 127.0.0.1
+
+<VirtualHost *:80>
+    ServerAdmin admin@test.local
+    ServerName test.local
+    ServerAlias www.test.local
+    DocumentRoot "/var/www/projects/gulfInterviewProject/public"
+ 
+    <Directory "/var/www/projects/gulfInterviewProject/">
+            Options Indexes FollowSymLinks MultiViews
+            AllowOverride All
+            Order allow,deny
+            allow from all
+            Require all granted
+    </Directory>
+
+</VirtualHost>

@@ -1,0 +1,83 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: installing python-2.7 mysql libraries
+      apt: name=python-mysqldb state=present
+      
+    - name: Update all packages to their latest version (Could take up to 20 mins depending on connection speed)
+      apt:
+            name: "*"
+            state: latest
+
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      apt:
+            upgrade: dist
+      
+    - name: Remove sites-available/test.local.conf
+      shell: rm -rf /etc/apache2/sites-available/test.local.conf
+      
+    - name: Remove sites-enabled/test.local.conf
+      shell: rm -rf /etc/apache2/sites-enabled/test.local.conf
+      
+    - name: Copy site .conf file to sites-available
+      copy:
+            src: templates/site.conf.j2
+            dest: /etc/apache2/sites-available/test.local.conf
+
+    - name: Create symbolic link to new site
+      shell: ln -s /etc/apache2/sites-available/test.local.conf /etc/apache2/sites-enabled/test.local.conf
+      ignore_errors: yes
+      
+    - name: Add xdebug
+      shell: pecl install xdebug
+      ignore_errors: yes
+      
+    - name: Remove /etc/php/7.4/fpm/php.ini
+      shell: rm -rf /etc/php/7.4/fpm/php.ini
+      
+    - name: Remove /etc/php/7.4/cli/php.ini
+      shell: rm -rf /etc/php/7.4/cli/php.ini
+      
+    - name: Copy php.ini.cmdline file to cli
+      copy:
+            src: templates/php.ini.cmdline
+            dest: /etc/php/7.4/cli/php.ini
+      
+    - name: Copy php.ini file to fpm
+      copy:
+            src: templates/php.ini
+            dest: /etc/php/7.4/fpm/php.ini
+      
+    - name: Restart Apache
+      shell: service apache2 restart
+      
+    - name: Delete database with name 'laravel'
+      mysql_db:
+            name: gulf
+            state: absent
+    
+    - name: Delete database with name 'laravel_testing'
+      mysql_db:
+            name: gulf_testing
+            state: absent
+    
+    - name: Create a new database with name laravel
+      community.mysql.mysql_db:
+            name: gulf
+            state: present
+    
+    - name: Create a new database with name laravel_testing
+      community.mysql.mysql_db:
+            name: gulf_testing
+            state: present
+    
+    - name: Create database user with name dbuser and password Velocity96 with all database privileges
+      community.mysql.mysql_user:
+            name: dbuser
+            password: Velocity96
+            priv: '*.*:ALL'
+            state: present
+            
+    - name: Run Migrations
+      shell: cd /var/www/projects/gulfInterviewProject && php artisan migrate && php artisan migrate --env=local

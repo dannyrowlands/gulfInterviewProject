@@ -1,0 +1,5 @@
+---
+- name: Run first playbook
+  import_playbook: roles/webserver/webserver.yml
+#- name: Run next playbook
+#  import_playbook: roles/next-playbook.yml

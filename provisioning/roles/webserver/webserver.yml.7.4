@@ -1,0 +1,65 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: installing python-2.7 mysql libraries
+      apt: name=python-mysqldb state=present
+      
+    - name: Update all packages to their latest version (Could take up to 20 mins depending on connection speed)
+      apt:
+            name: "*"
+            state: latest
+
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      apt:
+            upgrade: dist
+      
+    - name: Remove sites-available/test.local.conf
+      shell: rm -rf /etc/apache2/sites-available/test.local.conf
+      
+    - name: Remove sites-enabled/test.local.conf
+      shell: rm -rf /etc/apache2/sites-enabled/test.local.conf
+      
+    - name: Copy site .conf file to sites-available
+      copy:
+            src: templates/site.conf.j2
+            dest: /etc/apache2/sites-available/test.local.conf
+
+    - name: Create symbolic link to new site
+      shell: ln -s /etc/apache2/sites-available/test.local.conf /etc/apache2/sites-enabled/test.local.conf
+      ignore_errors: yes
+      
+    - name: Add xdebug
+      shell: pecl install xdebug
+      ignore_errors: yes
+      
+    - name: Copy php.ini.additions file to ~
+      copy:
+            src: templates/php.ini.additions
+            dest: ~/php.ini.additions
+      
+    - name: Add xdebug lines to php.ini
+      shell: cat ~/php.ini.additions >> /etc/php/7.3/cli/php.ini
+      
+    - name: Restart Apache
+      shell: service apache2 restart
+      
+    - name: Delete database with name 'laravel'
+      mysql_db:
+            name: laravel
+            state: absent
+    
+    - name: Create a new database with name laravel
+      community.mysql.mysql_db:
+            name: laravel
+            state: present
+    
+    - name: Create database user with name dbuser and password Velocity96 with all database privileges
+      community.mysql.mysql_user:
+            name: dbuser
+            password: Velocity96
+            priv: '*.*:ALL'
+            state: present
+            
+    - name: Run Migrations
+      shell: cd /var/www/projects/laravel && php artisan migrate

@@ -1,0 +1,109 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: installing python-3 mysql libraries
+      yum: name=python3-mysql state=present
+      
+    - name: Upgrade all packages to their latest version (Could take up to 20 mins depending on connection speed)
+      yum:
+            name: "*"
+            state: latest
+            
+    - name: Install the latest version of Apache
+      yum:
+            name: httpd
+            state: latest
+            
+    - name: Install MariaDB
+      yum:
+            name: mariadb-server
+            state: latest
+            
+    - name: Start the mariaDB(MySQL) service
+      action: service name=mariadb state=started
+       
+    - name: Remove /etc/httpd/conf.d/test.local.conf
+      shell: rm -rf /etc/httpd/conf.d/test.local.conf
+      
+    - name: Copy site .conf file to conf.d
+      copy:
+            src: templates/site.conf.j2
+            dest: /etc/httpd/conf.d/test.local.conf
+            
+    - name: dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      shell: dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      
+    - name: dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+      shell: dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+      
+    - name: dnf -y install yum-utils
+      shell: dnf -y install yum-utils
+      
+    - name: dnf module install php:remi-8.0 -y 
+      shell: dnf module install php:remi-8.0 -y 
+      
+    - name: dnf install php -y 
+      shell: dnf install php -y 
+      
+    - name: dnf -y install php-{cli,fpm,mysqlnd,zip,devel,gd,mbstring,curl,xml,pear,bcmath,json}
+      shell: dnf -y install php-{cli,fpm,mysqlnd,zip,devel,gd,mbstring,curl,xml,pear,bcmath,json}
+      
+    - name: Install mod_fcgid
+      yum:
+            name: mod_fcgid
+            state: latest
+            
+    - name: Install php-fpm
+      yum:
+            name: php-fpm
+            state: latest
+             
+    - name: Add xdebug
+      shell: pecl install xdebug
+      ignore_errors: yes
+
+    - name: Remove old php.ini file
+      shell: rm -rf /etc/php.ini
+      
+    - name: Copy php.ini
+      copy:
+            src: templates/php.ini
+            dest: /etc/php.ini           
+    
+    - name: Open firewall for apache
+      shell: firewall-cmd --zone=public --permanent --add-service=http && firewall-cmd --reload
+      
+    - name: Set web files to 0777
+      file:
+            path: /var/www
+            mode: '0777'
+            
+    - name: Set Apache to start on boot
+      shell: sudo systemctl enable httpd
+
+            
+    - name: Restart Apache
+      shell: service httpd restart
+      
+    - name: Delete database with name 'laravel'
+      mysql_db:
+            name: laravel
+            state: absent
+    
+    - name: Create a new database with name laravel
+      community.mysql.mysql_db:
+            name: laravel
+            state: present
+    
+    - name: Create database user with name dbuser and password Velocity96 with all database privileges
+      community.mysql.mysql_user:
+            name: dbuser
+            password: Velocity96
+            priv: '*.*:ALL'
+            state: present
+    
+    - name: Run Migrations
+      shell: cd /var/www/projects/laravel && php artisan migrate
+      
+    
