@@ -62,7 +62,7 @@ class partnersModelTest extends TestCase
     
     public function testPartnerIsInstanceofPartnerClass(): void
     {
-        $this->assertInstanceOf(Partner::class, $this->obj);
+        $this->assertInstanceOf(Partners::class, $this->obj);
     }
     
     /**
@@ -71,7 +71,7 @@ class partnersModelTest extends TestCase
     
     public function testPartnerModelsCanBeInstantiatedViaFactory() : void
     {
-        $this->assertInstanceOf(Partner::class, $this->obj);
+        $this->assertInstanceOf(Partners::class, $this->obj);
     }
 }
             

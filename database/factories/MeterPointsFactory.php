@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\MeterPoints;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use \App\Models\Partners;
 
 class MeterPointsFactory extends Factory
 {
@@ -22,7 +23,11 @@ class MeterPointsFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'meterpoint' => $this->faker->numberBetween(0, 50),
+            'consumption' => $this->faker->numberBetween(0, 50),
+            'uplift' => $this->faker->numberBetween(0, 50),
+            'created_at' => $this->faker->dateTimeBetween('-1 year', '-10 days'),
+            'updated_at' => $this->faker->dateTimeBetween('-9 days', '-1 days'),
         ];
     }
 }

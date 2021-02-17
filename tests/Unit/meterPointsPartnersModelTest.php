@@ -43,7 +43,8 @@ class meterPointPartnersModelTest extends TestCase
         $attributes = $this->obj->getAttributes();
         
         $this->assertTrue(array_key_exists('id', $attributes));
-        $this->assertTrue(array_key_exists('name', $attributes));
+        $this->assertTrue(array_key_exists('partner_id', $attributes));
+        $this->assertTrue(array_key_exists('meter_point_id', $attributes));
         $this->assertTrue(array_key_exists('created_at', $attributes));
         $this->assertTrue(array_key_exists('updated_at', $attributes));
     }
@@ -61,18 +62,18 @@ class meterPointPartnersModelTest extends TestCase
      * @return void
      */
     
-    public function testPartnerIsInstanceofPartnerClass(): void
+    public function testMeterPointPartnersIsInstanceofMeterPointPartnersClass(): void
     {
-        $this->assertInstanceOf(Partner::class, $this->obj);
+        $this->assertInstanceOf(MeterPointPartners::class, $this->obj);
     }
     
     /**
     * @return void
     */
     
-    public function testPartnerModelsCanBeInstantiatedViaFactory() : void
+    public function testMeterPointPartnersModelsCanBeInstantiatedViaFactory() : void
     {
-        $this->assertInstanceOf(Partner::class, $this->obj);
+        $this->assertInstanceOf(MeterPointPartners::class, $this->obj);
     }
 }
             
