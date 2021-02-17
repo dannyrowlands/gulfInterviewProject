@@ -19,7 +19,8 @@ class CreateMeterPointPartnersTable extends Migration
             $table->unsignedBigInteger('meter_point_id');
             $table->timestamps();
             
-            $table->foreign('partner_id')->references('id')->on('partners')->onDelete('cascade');
+            $table->foreign('partner_id')->references('id')->on('partners');
+            $table->foreign('meter_point_id')->references('id')->on('meter_points');
         });
     }
 
