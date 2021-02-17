@@ -16,6 +16,7 @@ class CreatePartnersTable extends Migration
         Schema::create('partners', function (Blueprint $table) {
             $table->id();
             $table->char('name', 55);
+            $table->softDeletes();
             $table->timestamps();
             
             $table->index(['id', 'created_at']);

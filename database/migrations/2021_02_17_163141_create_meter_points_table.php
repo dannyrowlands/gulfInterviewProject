@@ -18,6 +18,7 @@ class CreateMeterPointsTable extends Migration
             $table->char('meterpoint', 200);
             $table->bigInteger('consumption');
             $table->bigInteger('uplift');
+            $table->softDeletes();
             $table->timestamps();
             
             $table->index(['id', 'consumption', 'uplift', 'created_at']);
